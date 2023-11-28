@@ -6,6 +6,12 @@ TagManager:
   tags:
   - Environment
   - Enemy
+  - Weapon1
+  - Weapon2
+  - Weapon3
+  - SmallAmmo
+  - BigAmmo
+  - MedAmmo
   layers:
   - Default
   - TransparentFX
