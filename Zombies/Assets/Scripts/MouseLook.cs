@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//This script was taken from the Maze project. 
 
 public class MouseLook : MonoBehaviour
 {
