@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//Iversen-Krampitz, Ian 
+//11/30/2023
+//controls enemies. 
 
 public class Enemy : MonoBehaviour
 {

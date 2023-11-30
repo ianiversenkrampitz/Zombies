@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 //Iversen-Krampitz, Ian
 //11/16/2023
-//Controls the player, collision, guns. 
+//Controls the player, collision, guns, UI. 
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     public int smallAmmo;
     public int medAmmo;
     public int bigAmmo;
+    public int score;
+    public int totalScore;
     public bool IsDown;
     public bool takesDamage;
     public bool hasWeapon1;
@@ -21,6 +23,9 @@ public class PlayerController : MonoBehaviour
     public bool usingWeapon1;
     public bool usingWeapon2;
     public bool usingWeapon3;
+    public bool canFireW1;
+    public bool canFireW2;
+    public bool canFireW3;
     public GameObject hurt1;
     public GameObject hurt2;
     public GameObject hurt3;
@@ -28,10 +33,10 @@ public class PlayerController : MonoBehaviour
     public GameObject weapon1;
     public GameObject weapon2;
     public GameObject weapon3;
-    public int score;
-    public int totalScore;
-    public float dificultyLevel;
     public Animation gunAnimation;
+    public Animation pistolAnimation;
+    public Animation shotgunAnimation;
+    public Animation arAnimation;
     Camera mainCamera;
 
     // Start is called before the first frame update
@@ -47,6 +52,7 @@ public class PlayerController : MonoBehaviour
         usingWeapon1 = true;
         usingWeapon2 = false;
         usingWeapon3 = false;
+        speed = 4;
     }
 
     // Update is called once per frame
@@ -139,10 +145,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Weapon1")
         {
             //autoswitches to weapon 1 if player didn't previously have it 
-            if (hasWeapon1 == false)
+            if (hasWeapon1 == false || noGun == true)
             {
                 SwitchWeapon1();
                 hasWeapon1 = true;
+                noGun = false;
             }
             smallAmmo += 15;
             other.gameObject.SetActive(false);
@@ -151,10 +158,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Weapon2")
         {
             //autoswitches to weapon 2 if player didn't previously have it 
-            if (hasWeapon2 == false)
+            if (hasWeapon2 == false || noGun == true)
             {
                 SwitchWeapon2();
                 hasWeapon2 = true;
+                noGun = false;
             }
             medAmmo += 15;
             other.gameObject.SetActive(false);
@@ -163,10 +171,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Weapon3")
         {
             //autoswitches to weapon 3 if player didn't previously have it 
-            if (hasWeapon3 == false)
+            if (hasWeapon3 == false || noGun == true)
             {
                 SwitchWeapon3();
                 hasWeapon3 = true;
+                noGun = false;
             }
             bigAmmo += 15;
             other.gameObject.SetActive(false);
@@ -468,6 +477,36 @@ public class PlayerController : MonoBehaviour
         takesDamage = false;
         yield return new WaitForSeconds(1);
         takesDamage = true;
+    }
+    /// <summary>
+    /// cooldown for firing pistol
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator PistolCooldown()
+    {
+        canFireW1 = false;
+        yield return new WaitForSeconds(.4f);
+        canFireW1 = true;
+    }
+    /// <summary>
+    /// cooldown for firing shotgun
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator ShotgunCooldown()
+    {
+        canFireW2 = false;
+        yield return new WaitForSeconds(1f);
+        canFireW2 = true;
+    }
+    /// <summary>
+    /// cooldown between each assault rifle bullet
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator ARCooldown()
+    {
+        canFireW3 = false;
+        yield return new WaitForSeconds(.2f);
+        canFireW3 = true;
     }
     /// <summary>
     /// regens health back to full over time 
