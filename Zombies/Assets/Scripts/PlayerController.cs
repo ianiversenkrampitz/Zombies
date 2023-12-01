@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     public bool canFireW1;
     public bool canFireW2;
     public bool canFireW3;
+    public bool switchingWeapon;
     public GameObject hurt1;
     public GameObject hurt2;
     public GameObject hurt3;
@@ -52,7 +53,11 @@ public class PlayerController : MonoBehaviour
         usingWeapon1 = true;
         usingWeapon2 = false;
         usingWeapon3 = false;
-        speed = 4;
+        canFireW1 = true;
+        canFireW2 = true;
+        canFireW3 = true;
+        speed = 6;
+        smallAmmo = 15;
     }
 
     // Update is called once per frame
@@ -77,25 +82,29 @@ public class PlayerController : MonoBehaviour
         //moves the player 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.position += -transform.right * speed * Time.deltaTime;
+            transform.position += speed * Time.deltaTime * -transform.right;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            transform.position += transform.right * speed * Time.deltaTime;
+            transform.position += speed * Time.deltaTime * transform.right;
         }
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position += transform.forward * speed * Time.deltaTime;
+            transform.position += speed * Time.deltaTime * transform.forward;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            transform.position += -transform.forward * speed * Time.deltaTime;
+            transform.position += speed * Time.deltaTime * -transform.forward;
         }
         //fires gun 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Debug.Log("Player fired.");
             FireWeapon();
+        }
+        if (Input.GetKey(KeyCode.Mouse0) && usingWeapon3 == true)
+        {
+            FireAutomaticWeapon();
         }
         //switches weapons 
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -214,156 +223,108 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void FireWeapon()
     {
-        //temporary gun animation, shouldn't actually be placed here when complete
-        gunAnimation.Play("GunTestAnimation");
-        RaycastHit hit;
+        if (switchingWeapon == false)
         {
-            if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, 200f))
+            //temporary gun animation, shouldn't actually be placed here when complete
+            gunAnimation.Play("GunTestAnimation");
+            //for weapon 1 
+            if (hasWeapon1 == true && usingWeapon1 == true && canFireW1 == true)
             {
-                if (hit.collider.tag == "Environment")
+                if (smallAmmo >= 1)
                 {
-                    //for weapon 1 
-                    if (hasWeapon1 == true && usingWeapon1 == true)
+                    if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
                     {
-                        if (smallAmmo >= 1)
+                        smallAmmo -= 1;
+                        if (hit.collider.tag == "Environment")
                         {
-                            //whatever goes here will make a bullethole in the wall depending on the weapon being used 
-                            smallAmmo -= 1;
+                            //insert appropriate bullet decal here
                             Debug.Log("bullet hit wall.");
                         }
-                        else
+                        else if (hit.collider.tag == "Enemy")
                         {
-                            AutoSwitch();
-                            Debug.Log("no bullets for weapon1.");
-                        }
-                    }
-                    //for weapon 2
-                    if (hasWeapon2 == true && usingWeapon2 == true)
-                    {
-                        if (medAmmo >= 1)
-                        {
-                            //whatever goes here will make a bullethole in the wall depending on the weapon being used   
-                            medAmmo -= 1;
-                            Debug.Log("bullet hit wall.");
-                        }
-                        else
-                        {
-                            AutoSwitch();
-                            Debug.Log("no bullets for weapon2.");
-                        }
-                    }
-                    //for weapon 3
-                    if (hasWeapon3 == true && usingWeapon3 == true)
-                    {
-                        if (bigAmmo >= 1)
-                        {
-                            //whatever goes here will make a bullethole in the wall depending on the weapon being used 
-                            bigAmmo -= 1;
+                            //deal damage to enemy here 
                             Debug.Log("bullet hit enemy.");
                         }
-                        else
-                        {
-                            AutoSwitch();
-                            Debug.Log("no bullets for weapon3.");
-                        }
                     }
-                }
-                if (hit.collider.tag == "Enemy")
-                {
-                    //for weapon 1 
-                    if (hasWeapon1 == true && usingWeapon1 == true)
-                    {
-                        if (smallAmmo >= 1)
-                        {
-                            //put reference to enemy health in enemy script
-                            //subtract amount from health  
-                            smallAmmo -= 1;
-                            Debug.Log("bullet hit enemy.");
-                        }
-                        else
-                        {
-                            AutoSwitch();
-                            Debug.Log("no bullets for weapon1.");
-                        }
-                    }
-                    //for weapon 2
-                    if (hasWeapon2 == true && usingWeapon2 == true)
-                    {
-                        if (medAmmo >= 1)
-                        {
-                            //put reference to enemy health in enemy script
-                            //put subtract amount from health  
-                            medAmmo -= 1;
-                            Debug.Log("bullet hit enemy.");
-                        }
-                        else
-                        {
-                            AutoSwitch();
-                            Debug.Log("no bullets for weapon2.");
-                        }
-                    }
-                    //for weapon 3
-                    if (hasWeapon3 == true && usingWeapon3 == true)
-                    {
-                        if (bigAmmo >= 1)
-                        {
-                            //put reference to enemy health in enemy script
-                            //put subtract amount from health  
-                            bigAmmo -= 1;
-                            Debug.Log("bullet hit enemy.");
-                        }
-                        else
-                        {
-                            AutoSwitch();
-                            Debug.Log("no bullets for weapon3.");
-                        }
-                    }
-                }
-            }
-            else
-            {
-                //for weapon 1 
-                if (hasWeapon1 == true && usingWeapon1 == true)
-                {
-                    if (smallAmmo >= 1)
+                    else
                     {
                         smallAmmo -= 1;
                         Debug.Log("bullet hit nothing.");
                     }
-                    else
-                    {
-                        AutoSwitch();
-                        Debug.Log("no bullets for weapon1.");
-                    }
+                    StartCoroutine(PistolCooldown());
                 }
-                //for weapon 2
-                if (hasWeapon2 == true && usingWeapon2 == true)
+                else
                 {
-                    if (medAmmo >= 1)
+                    AutoSwitch();
+                    Debug.Log("no bullets for weapon1.");
+                }
+            }
+            //for weapon 2 
+            if (hasWeapon2 == true && usingWeapon2 == true && canFireW2 == true)
+            {
+                if (medAmmo >= 1)
+                {
+                    if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
+                    {
+                        medAmmo -= 1;
+                        if (hit.collider.tag == "Environment")
+                        {
+                            //insert appropriate bullet decal here 
+                            Debug.Log("bullet hit wall.");
+                        }
+                        else if (hit.collider.tag == "Enemy")
+                        {
+                            //deal damage to enemy here 
+                            Debug.Log("bullet hit enemy.");
+                        }
+                    }
+                    else
                     {
                         medAmmo -= 1;
                         Debug.Log("bullet hit nothing.");
                     }
-                    else
-                    {
-                        AutoSwitch();
-                        Debug.Log("no bullets for weapon2.");
-                    }
+                    StartCoroutine(ShotgunCooldown());
                 }
-                //for weapon 3
-                if (hasWeapon3 == true && usingWeapon3 == true)
+                else
                 {
-                    if (bigAmmo >= 1)
+                    AutoSwitch();
+                    Debug.Log("no bullets for weapon2.");
+                }
+            }
+        }
+    }
+    private void FireAutomaticWeapon()
+    {
+        //for weapon 3 
+        if (canFireW3 == true)
+        {
+            if (bigAmmo >= 1)
+            {
+                if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
+                {
+                    bigAmmo -= 1;
+                    if (hit.collider.tag == "Environment")
                     {
-                        bigAmmo -= 1;
-                        Debug.Log("bullet hit nothing.");
+                        //insert appropriate bullet decal here 
+                        Debug.Log("bullet hit wall.");
                     }
-                    else
+                    else if (hit.collider.tag == "Enemy")
                     {
-                        AutoSwitch();
-                        Debug.Log("no bullets for weapon3.");
+                        //deal damage to enemy here 
+                        Debug.Log("bullet hit enemy.");
                     }
                 }
+                else
+                {
+                    bigAmmo -= 1;
+                    Debug.Log("bullet hit nothing.");
+                }
+                StartCoroutine(ARCooldown());
+            }
+            else
+            {
+                AutoSwitch();
+                Debug.Log("no bullets for weapon2.");
             }
         }
     }
@@ -402,39 +363,52 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void SwitchWeapon1()
     {
-        usingWeapon1 = true;
-        usingWeapon2 = false;
-        usingWeapon3 = false;
-        noGun = false;
-        Debug.Log("Switched to weapon1.");
+        if (usingWeapon1 == false)
+        {
+            StartCoroutine(SwitchWeapons());
+            usingWeapon1 = true;
+            usingWeapon2 = false;
+            usingWeapon3 = false;
+            noGun = false;
+            Debug.Log("Switched to weapon1.");
+        }
     }
     /// <summary>
     /// switches to weapon 2 
     /// </summary>
     private void SwitchWeapon2()
     {
-        usingWeapon2 = true;
-        usingWeapon3 = false;
-        usingWeapon1 = false;
-        noGun = false;
-        Debug.Log("Switched to weapon2.");
+        if (usingWeapon2 == false)
+        {
+            StartCoroutine(SwitchWeapons());
+            usingWeapon2 = true;
+            usingWeapon3 = false;
+            usingWeapon1 = false;
+            noGun = false;
+            Debug.Log("Switched to weapon2.");
+        }
     }
     /// <summary>
     /// switches to weapon 3 
     /// </summary>
     private void SwitchWeapon3()
     {
-        usingWeapon3 = true;
-        usingWeapon2 = false;
-        usingWeapon1 = false;
-        noGun = false;
-        Debug.Log("Switched to weapon3.");
+        if (usingWeapon3 == false)
+        {
+            StartCoroutine(SwitchWeapons());
+            usingWeapon3 = true;
+            usingWeapon2 = false;
+            usingWeapon1 = false;
+            noGun = false;
+            Debug.Log("Switched to weapon3.");
+        }
     }
     /// <summary>
     /// switches to no weapon
     /// </summary>
     private void SwitchWeaponNone()
     {
+        StartCoroutine(SwitchWeapons());
         usingWeapon3 = false;
         usingWeapon2 = false;
         usingWeapon1 = false;
@@ -448,18 +422,22 @@ public class PlayerController : MonoBehaviour
     {
         if (hasWeapon1 && smallAmmo >= 1)
         {
+            StartCoroutine(SwitchWeapons());
             SwitchWeapon1();
         }
         else if (hasWeapon2 && medAmmo >= 1)
         {
+            StartCoroutine(SwitchWeapons());
             SwitchWeapon2();
         }
         else if (hasWeapon3 && bigAmmo >= 1)
         {
+            StartCoroutine(SwitchWeapons());
             SwitchWeapon3();
         }
         else
         {
+            StartCoroutine(SwitchWeapons());
             SwitchWeaponNone();
         }
     }
@@ -505,7 +483,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator ARCooldown()
     {
         canFireW3 = false;
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.1f);
         canFireW3 = true;
     }
     /// <summary>
@@ -524,5 +502,12 @@ public class PlayerController : MonoBehaviour
             }
             yield return new WaitForEndOfFrame();
         }
+    }
+    //keeps you from shooting while switching weapons 
+    IEnumerator SwitchWeapons()
+    {
+        switchingWeapon = true;
+        yield return new WaitForSeconds(1);
+        switchingWeapon = false;
     }
 }

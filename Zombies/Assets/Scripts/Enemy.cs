@@ -8,6 +8,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public int health;
+    public MapController mapController;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +19,14 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+    private void Die()
+    {
+        gameObject.SetActive(false);
+        mapController.enemiesKilled++;
     }
 }

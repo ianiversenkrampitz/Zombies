@@ -1481,6 +1481,10 @@ PrefabInstance:
       propertyPath: hurt3
       value: 
       objectReference: {fileID: 1861110806}
+    - target: {fileID: 9205576424501916574, guid: 08f5940e0d8fca84a89c32382c180c6e, type: 3}
+      propertyPath: speed
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6286745622330905038, guid: 08f5940e0d8fca84a89c32382c180c6e, type: 3}
     m_RemovedGameObjects: []
