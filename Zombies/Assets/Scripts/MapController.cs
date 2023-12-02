@@ -12,6 +12,7 @@ public class MapController : MonoBehaviour
     public int enemiesInWave;
     public GameObject enemy1;
     public GameObject enemy2;
+    public GameObject Player;
     public GameObject[] spawns;
     public bool CanSpawn;
     public int SpawnRate;
@@ -50,7 +51,11 @@ public class MapController : MonoBehaviour
             if (SpawnIndex < 4)
             {
                 //instantiates enemy at spawn index, starts cooldown, and adds one to spawn index
-                GameObject Enemy = Instantiate(enemy1, spawns[SpawnIndex].transform.position, spawns[SpawnIndex].transform.rotation);
+                GameObject enemyPrefab = Instantiate(enemy1, spawns[SpawnIndex].transform.position, spawns[SpawnIndex].transform.rotation);
+                Enemy enemyScript = enemyPrefab.GetComponent<Enemy>();
+                enemyScript.Player = Player;
+                enemyScript.player = Player.transform;
+                enemyScript.mapController = this;
                 StartCoroutine(EnemySpawnCooldown());
                 SpawnIndex++;
             }

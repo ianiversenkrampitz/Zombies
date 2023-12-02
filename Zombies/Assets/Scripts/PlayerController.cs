@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     public bool canFireW2;
     public bool canFireW3;
     public bool switchingWeapon;
+    public Enemy enemy;
     public GameObject hurt1;
     public GameObject hurt2;
     public GameObject hurt3;
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
     public Animation pistolAnimation;
     public Animation shotgunAnimation;
     public Animation arAnimation;
+    private Rigidbody rb;
     Camera mainCamera;
 
     // Start is called before the first frame update
@@ -58,6 +60,7 @@ public class PlayerController : MonoBehaviour
         canFireW3 = true;
         speed = 6;
         smallAmmo = 15;
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -145,8 +148,16 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.tag == "Enemy")
         {
-            TakeDamage();
-            Debug.Log("Player hit an enemy.");
+            //get reference to enemy being collided with 
+            GameObject thisEnemy = other.gameObject;
+            Enemy EnemyScript = thisEnemy.GetComponent<Enemy>();
+            if (EnemyScript.CanAttack == true)
+            {
+                TakeDamage();
+                //start the enemy attack cooldown 
+                EnemyScript.StartAttackCooldown();
+                Debug.Log("Player hit an enemy.");
+            }
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -242,7 +253,10 @@ public class PlayerController : MonoBehaviour
                         }
                         else if (hit.collider.tag == "Enemy")
                         {
-                            //deal damage to enemy here 
+                            Enemy enemyScript = hit.collider.GetComponent<Enemy>();
+                            enemyScript.health -= 3;
+                            //insert reference to enemy here 
+                            //deal damage to enemy here  
                             Debug.Log("bullet hit enemy.");
                         }
                     }
@@ -274,7 +288,8 @@ public class PlayerController : MonoBehaviour
                         }
                         else if (hit.collider.tag == "Enemy")
                         {
-                            //deal damage to enemy here 
+                            Enemy enemyScript = hit.collider.GetComponent<Enemy>();
+                            enemyScript.health -= 7;
                             Debug.Log("bullet hit enemy.");
                         }
                     }
@@ -310,7 +325,8 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (hit.collider.tag == "Enemy")
                     {
-                        //deal damage to enemy here 
+                        Enemy enemyScript = hit.collider.GetComponent<Enemy>();
+                        enemyScript.health -= 3;
                         Debug.Log("bullet hit enemy.");
                     }
                 }
