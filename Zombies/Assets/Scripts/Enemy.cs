@@ -58,7 +58,6 @@ public class Enemy : MonoBehaviour
                 StartCoroutine(WaitToJump());
             }
         }
-
         if (health <= 0)
         {
             Die();

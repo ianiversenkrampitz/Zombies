@@ -38,7 +38,7 @@ public class UI : MonoBehaviour
         {
             Ammo.text = "Ammo: " + playerController.bigAmmo;
         }
-        if (playerController.noGun == true)
+        if (playerController.usingNoGun == true)
         {
             Ammo.text = "";
         }

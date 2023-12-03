@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 //Iversen-Krampitz, Ian 
 //11/30/2023
@@ -17,7 +18,7 @@ public class MapController : MonoBehaviour
     public bool CanSpawn;
     public int SpawnRate;
     public int SpawnIndex;
-
+    public int numberOfSpawns;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,16 +32,18 @@ public class MapController : MonoBehaviour
     {
         if (enemiesKilled == 4)
         {
-            RoundNumber++;
+            RoundNumber = 2;
         }
         if (RoundNumber == 1)
         {
             SpawnRate = 1;
+            numberOfSpawns = 4;
             SpawnEnemies();
         }
         if (RoundNumber == 2)
         {
             SpawnRate = 2;
+            numberOfSpawns = 7;
             SpawnEnemies();
         }
     }
@@ -48,16 +51,30 @@ public class MapController : MonoBehaviour
     {
         if (CanSpawn == true)
         {
-            if (SpawnIndex < 4)
+            if (SpawnIndex <= numberOfSpawns)
             {
-                //instantiates enemy at spawn index, starts cooldown, and adds one to spawn index
-                GameObject enemyPrefab = Instantiate(enemy1, spawns[SpawnIndex].transform.position, spawns[SpawnIndex].transform.rotation);
-                Enemy enemyScript = enemyPrefab.GetComponent<Enemy>();
-                enemyScript.Player = Player;
-                enemyScript.player = Player.transform;
-                enemyScript.mapController = this;
-                StartCoroutine(EnemySpawnCooldown());
-                SpawnIndex++;
+                if (SpawnIndex == 3)
+                {
+                    //instantiates enemy at spawn index, starts cooldown, and adds one to spawn index
+                    GameObject enemyPrefab = Instantiate(enemy1, spawns[SpawnIndex].transform.position, spawns[SpawnIndex].transform.rotation);
+                    Enemy enemyScript = enemyPrefab.GetComponent<Enemy>();
+                    enemyScript.Player = Player;
+                    enemyScript.player = Player.transform;
+                    enemyScript.mapController = this;
+                    StartCoroutine(EnemySpawnCooldown());
+                    SpawnIndex = 1;
+                }
+                else
+                {
+                    //instantiates enemy at spawn index, starts cooldown, and adds one to spawn index
+                    GameObject enemyPrefab = Instantiate(enemy1, spawns[SpawnIndex].transform.position, spawns[SpawnIndex].transform.rotation);
+                    Enemy enemyScript = enemyPrefab.GetComponent<Enemy>();
+                    enemyScript.Player = Player;
+                    enemyScript.player = Player.transform;
+                    enemyScript.mapController = this;
+                    StartCoroutine(EnemySpawnCooldown());
+                    SpawnIndex++;
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 //Iversen-Krampitz, Ian
 //11/16/2023
 //Controls the player, collision, guns, UI. 
@@ -19,7 +20,7 @@ public class PlayerController : MonoBehaviour
     public bool hasWeapon1;
     public bool hasWeapon2;
     public bool hasWeapon3;
-    public bool noGun;
+    public bool usingNoGun;
     public bool usingWeapon1;
     public bool usingWeapon2;
     public bool usingWeapon3;
@@ -27,6 +28,10 @@ public class PlayerController : MonoBehaviour
     public bool canFireW2;
     public bool canFireW3;
     public bool switchingWeapon;
+    public bool switchWeapon1;
+    public bool switchWeapon2;
+    public bool switchWeapon3;
+    public bool switchWeaponNone;
     public Enemy enemy;
     public GameObject hurt1;
     public GameObject hurt2;
@@ -35,7 +40,6 @@ public class PlayerController : MonoBehaviour
     public GameObject weapon1;
     public GameObject weapon2;
     public GameObject weapon3;
-    public Animation gunAnimation;
     public Animation pistolAnimation;
     public Animation shotgunAnimation;
     public Animation arAnimation;
@@ -61,6 +65,7 @@ public class PlayerController : MonoBehaviour
         speed = 6;
         smallAmmo = 15;
         rb = GetComponent<Rigidbody>();
+        switchingWeapon = false;
     }
 
     // Update is called once per frame
@@ -102,7 +107,6 @@ public class PlayerController : MonoBehaviour
         //fires gun 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Debug.Log("Player fired.");
             FireWeapon();
         }
         if (Input.GetKey(KeyCode.Mouse0) && usingWeapon3 == true)
@@ -165,11 +169,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Weapon1")
         {
             //autoswitches to weapon 1 if player didn't previously have it 
-            if (hasWeapon1 == false || noGun == true)
+            if (hasWeapon1 == false || usingNoGun == true)
             {
                 SwitchWeapon1();
                 hasWeapon1 = true;
-                noGun = false;
+                usingNoGun = false;
             }
             smallAmmo += 15;
             other.gameObject.SetActive(false);
@@ -178,11 +182,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Weapon2")
         {
             //autoswitches to weapon 2 if player didn't previously have it 
-            if (hasWeapon2 == false || noGun == true)
+            if (hasWeapon2 == false || usingNoGun == true)
             {
                 SwitchWeapon2();
                 hasWeapon2 = true;
-                noGun = false;
+                usingNoGun = false;
             }
             medAmmo += 15;
             other.gameObject.SetActive(false);
@@ -191,11 +195,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Weapon3")
         {
             //autoswitches to weapon 3 if player didn't previously have it 
-            if (hasWeapon3 == false || noGun == true)
+            if (hasWeapon3 == false || usingNoGun == true)
             {
                 SwitchWeapon3();
                 hasWeapon3 = true;
-                noGun = false;
+                usingNoGun = false;
             }
             bigAmmo += 15;
             other.gameObject.SetActive(false);
@@ -204,27 +208,27 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "SmallAmmo")
         {
             smallAmmo += 10;
-            if (noGun == true && hasWeapon1 == true)
+            if (usingNoGun == true && hasWeapon1 == true)
             {
-                usingWeapon1 = true;
+                SwitchWeapon1();
             }
             other.gameObject.SetActive(false);
         }
         if (other.gameObject.tag == "MedAmmo")
         {
             medAmmo += 10;
-            if (noGun == true && hasWeapon2 == true)
+            if (usingNoGun == true && hasWeapon2 == true)
             {
-                usingWeapon2 = true;
+                SwitchWeapon2();
             }
             other.gameObject.SetActive(false);
         }
         if (other.gameObject.tag == "BigAmmo")
         {
             bigAmmo += 10;
-            if (noGun == true && hasWeapon3 == true)
+            if (usingNoGun == true && hasWeapon3 == true)
             {
-                usingWeapon3 = true;
+                SwitchWeapon3();
             }
             other.gameObject.SetActive(false);
         }
@@ -236,13 +240,13 @@ public class PlayerController : MonoBehaviour
     {
         if (switchingWeapon == false)
         {
-            //temporary gun animation, shouldn't actually be placed here when complete
-            gunAnimation.Play("GunTestAnimation");
             //for weapon 1 
             if (hasWeapon1 == true && usingWeapon1 == true && canFireW1 == true)
             {
                 if (smallAmmo >= 1)
                 {
+                    //plays gun animation 
+                    pistolAnimation.Play("PistolFire");
                     if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
                     {
                         smallAmmo -= 1;
@@ -255,8 +259,6 @@ public class PlayerController : MonoBehaviour
                         {
                             Enemy enemyScript = hit.collider.GetComponent<Enemy>();
                             enemyScript.health -= 3;
-                            //insert reference to enemy here 
-                            //deal damage to enemy here  
                             Debug.Log("bullet hit enemy.");
                         }
                     }
@@ -266,6 +268,7 @@ public class PlayerController : MonoBehaviour
                         Debug.Log("bullet hit nothing.");
                     }
                     StartCoroutine(PistolCooldown());
+                    Debug.Log("Fired weapon 1.");
                 }
                 else
                 {
@@ -278,6 +281,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (medAmmo >= 1)
                 {
+                    shotgunAnimation.Play("ShotgunFire");
                     if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
                     {
                         medAmmo -= 1;
@@ -299,6 +303,7 @@ public class PlayerController : MonoBehaviour
                         Debug.Log("bullet hit nothing.");
                     }
                     StartCoroutine(ShotgunCooldown());
+                    Debug.Log("Fired weapon 2.");
                 }
                 else
                 {
@@ -315,6 +320,7 @@ public class PlayerController : MonoBehaviour
         {
             if (bigAmmo >= 1)
             {
+                arAnimation.Play("ArFire");
                 if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
                 {
                     bigAmmo -= 1;
@@ -336,6 +342,7 @@ public class PlayerController : MonoBehaviour
                     Debug.Log("bullet hit nothing.");
                 }
                 StartCoroutine(ARCooldown());
+                Debug.Log("Fired weapon 3.");
             }
             else
             {
@@ -381,12 +388,11 @@ public class PlayerController : MonoBehaviour
     {
         if (usingWeapon1 == false)
         {
-            StartCoroutine(SwitchWeapons());
-            usingWeapon1 = true;
-            usingWeapon2 = false;
-            usingWeapon3 = false;
-            noGun = false;
-            Debug.Log("Switched to weapon1.");
+            StartCoroutine(SwitchWeapons1());
+        }
+        else
+        {
+            Debug.Log("Already using weapon 1.");
         }
     }
     /// <summary>
@@ -396,12 +402,11 @@ public class PlayerController : MonoBehaviour
     {
         if (usingWeapon2 == false)
         {
-            StartCoroutine(SwitchWeapons());
-            usingWeapon2 = true;
-            usingWeapon3 = false;
-            usingWeapon1 = false;
-            noGun = false;
-            Debug.Log("Switched to weapon2.");
+            StartCoroutine(SwitchWeapons2());
+        }
+        else
+        {
+            Debug.Log("Already using weapon 2.");
         }
     }
     /// <summary>
@@ -411,12 +416,11 @@ public class PlayerController : MonoBehaviour
     {
         if (usingWeapon3 == false)
         {
-            StartCoroutine(SwitchWeapons());
-            usingWeapon3 = true;
-            usingWeapon2 = false;
-            usingWeapon1 = false;
-            noGun = false;
-            Debug.Log("Switched to weapon3.");
+            StartCoroutine(SwitchWeapons3());
+        }
+        else
+        {
+            Debug.Log("Already using weapon 3.");
         }
     }
     /// <summary>
@@ -424,12 +428,10 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void SwitchWeaponNone()
     {
-        StartCoroutine(SwitchWeapons());
-        usingWeapon3 = false;
-        usingWeapon2 = false;
-        usingWeapon1 = false;
-        noGun = true;
-        Debug.Log("Switched to no weapon.");
+        if (usingNoGun == false)
+        {
+            StartCoroutine(SwitchWeaponsNone());
+        }
     }
     /// <summary>
     /// automatically switches to weapon with ammo
@@ -438,22 +440,18 @@ public class PlayerController : MonoBehaviour
     {
         if (hasWeapon1 && smallAmmo >= 1)
         {
-            StartCoroutine(SwitchWeapons());
             SwitchWeapon1();
         }
         else if (hasWeapon2 && medAmmo >= 1)
         {
-            StartCoroutine(SwitchWeapons());
             SwitchWeapon2();
         }
         else if (hasWeapon3 && bigAmmo >= 1)
         {
-            StartCoroutine(SwitchWeapons());
             SwitchWeapon3();
         }
         else
         {
-            StartCoroutine(SwitchWeapons());
             SwitchWeaponNone();
         }
     }
@@ -520,10 +518,135 @@ public class PlayerController : MonoBehaviour
         }
     }
     //keeps you from shooting while switching weapons 
-    IEnumerator SwitchWeapons()
+    IEnumerator SwitchWeapons1()
     {
         switchingWeapon = true;
-        yield return new WaitForSeconds(1);
+        if (usingWeapon2 == true)
+        {
+            //lower previous weapon 
+            shotgunAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon2 = false;
+            weapon2.SetActive(false);
+            Debug.Log("Switched off weapon 2.");
+        }
+        else if (usingWeapon3 == true)
+        {
+            arAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon3 = false;
+            weapon3.SetActive(false);
+            Debug.Log("Switched off weapon 3.");
+        }
+        else if (usingNoGun == true)
+        {
+            yield return new WaitForSeconds(.5f);
+            usingNoGun = false;
+            Debug.Log("Switched off no weapon.");
+        }
+        //raise current weapon
+        usingWeapon1 = true;
+        weapon1.SetActive(true);
+        pistolAnimation.Play("RaiseWeapon");
+        yield return new WaitForSeconds(.5f);
+        switchingWeapon = false;
+    }
+    IEnumerator SwitchWeapons2()
+    {
+        switchingWeapon = true;
+        if (usingWeapon1 == true)
+        {
+            //lower previous weapon 
+            pistolAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon1 = false;
+            weapon1.SetActive(false);
+            Debug.Log("Switched off weapon 1.");
+        }
+        else if (usingWeapon3 == true)
+        {
+            arAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon3 = false;
+            weapon3.SetActive(false);
+            Debug.Log("Switched off weapon 3.");
+        }
+        else if (usingNoGun == true)
+        {
+            yield return new WaitForSeconds(.5f);
+            usingNoGun = false;
+            Debug.Log("Switched off no weapon.");
+        }
+        //raise current weapon
+        usingWeapon2 = true;
+        weapon2.SetActive(true);
+        shotgunAnimation.Play("RaiseWeapon");
+        yield return new WaitForSeconds(.5f);
+        switchingWeapon = false;
+    }
+    IEnumerator SwitchWeapons3()
+    {
+        switchingWeapon = true;
+        if (usingWeapon1 == true)
+        {
+            //lower previous weapon 
+            pistolAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon1 = false;
+            weapon1.SetActive(false);
+            Debug.Log("Switched off weapon 1.");
+        }
+        else if (usingWeapon2 == true)
+        {
+            shotgunAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon2 = false;
+            weapon2.SetActive(false);
+            Debug.Log("Switched off weapon 2.");
+        }
+        else if (usingNoGun == true)
+        {
+            yield return new WaitForSeconds(.5f);
+            usingNoGun = false;
+            Debug.Log("Switched off no weapon.");
+        }
+        //raise current weapon
+        usingWeapon3 = true;
+        weapon3.SetActive(true);
+        arAnimation.Play("RaiseWeapon");
+        yield return new WaitForSeconds(.5f);
+        switchingWeapon = false;
+    }
+    IEnumerator SwitchWeaponsNone()
+    {
+        switchingWeapon = true;
+        if (usingWeapon1 == true)
+        {
+            //lower previous weapon 
+            pistolAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon1 = false;
+            weapon1.SetActive(false);
+            Debug.Log("Switched off weapon 1.");
+        }
+        else if (usingWeapon2 == true)
+        {
+            shotgunAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon2 = false;
+            weapon2.SetActive(false);
+            Debug.Log("Switched off weapon 2.");
+        }
+        else if (usingWeapon3 == true)
+        {
+            arAnimation.Play("LowerWeapon");
+            yield return new WaitForSeconds(.5f);
+            usingWeapon3 = false;
+            weapon3.SetActive(false);
+            Debug.Log("Switched off weapon 3.");
+        }
+        usingNoGun = true;
+        Debug.Log("Switched to no weapon.");
         switchingWeapon = false;
     }
 }
