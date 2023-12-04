@@ -63,6 +63,9 @@ public class Enemy : MonoBehaviour
             Die();
         }
     }
+    /// <summary>
+    /// kills enemy and adds to enemies killed count 
+    /// </summary>
     private void Die()
     {
         gameObject.SetActive(false);
@@ -82,7 +85,7 @@ public class Enemy : MonoBehaviour
     IEnumerator WaitToAttack()
     {
         CanAttack = false;
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         CanAttack = true;
     }
     IEnumerator WaitToJump()

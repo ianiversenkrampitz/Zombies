@@ -188,7 +188,7 @@ public class PlayerController : MonoBehaviour
                 hasWeapon2 = true;
                 usingNoGun = false;
             }
-            medAmmo += 15;
+            medAmmo += 8;
             other.gameObject.SetActive(false);
             Debug.Log("Picked up weapon2.");
         }
@@ -201,7 +201,7 @@ public class PlayerController : MonoBehaviour
                 hasWeapon3 = true;
                 usingNoGun = false;
             }
-            bigAmmo += 15;
+            bigAmmo += 30;
             other.gameObject.SetActive(false);
             Debug.Log("Picked up weapon3.");
         }
@@ -216,7 +216,7 @@ public class PlayerController : MonoBehaviour
         }
         if (other.gameObject.tag == "MedAmmo")
         {
-            medAmmo += 10;
+            medAmmo += 5;
             if (usingNoGun == true && hasWeapon2 == true)
             {
                 SwitchWeapon2();
@@ -225,7 +225,7 @@ public class PlayerController : MonoBehaviour
         }
         if (other.gameObject.tag == "BigAmmo")
         {
-            bigAmmo += 10;
+            bigAmmo += 1;
             if (usingNoGun == true && hasWeapon3 == true)
             {
                 SwitchWeapon3();
