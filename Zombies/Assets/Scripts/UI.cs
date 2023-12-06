@@ -10,21 +10,36 @@ public class UI : MonoBehaviour
 {
     public TMP_Text Ammo;
     public TMP_Text Round;
+    public TMP_Text Score;
+    public TMP_Text Cost;
     public PlayerController playerController;
     public MapController mapController;
+    public int cost;
+    public bool showCost;
+    public int score;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        //shows the cost of a weapon when going close to it 
+        if (showCost == true)
+        {
+            Cost.text = "Press E to buy for " + cost;
+            Debug.Log("showcost is true");
+        }
+        else
+        {
+            Cost.text = "";
+        }
         //creates round number 
         Round.text = "Round " + mapController.RoundNumber;
-
+        Score.text = "Score: " + score;
         //creates ammo count based on weapon being used 
         if (playerController.usingWeapon1 == true)
         {

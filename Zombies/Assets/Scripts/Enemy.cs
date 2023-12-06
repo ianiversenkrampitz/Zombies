@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour
     private float playerZ;
     private float playerY;
     public MapController mapController;
+    public PlayerController playerController;
+    public UI userInterface;
     private Rigidbody rb;
     public Transform player;
     public GameObject Player;
@@ -70,6 +72,7 @@ public class Enemy : MonoBehaviour
     {
         gameObject.SetActive(false);
         mapController.enemiesKilled++;
+        userInterface.score += 100;
     }
     private void Jump()
     {

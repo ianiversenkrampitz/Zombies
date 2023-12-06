@@ -368,7 +368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9074809010292777983
 Transform:
   m_ObjectHideFlags: 0
@@ -5720,7 +5720,6 @@ MonoBehaviour:
   smallAmmo: 0
   medAmmo: 0
   bigAmmo: 0
-  score: 0
   totalScore: 0
   IsDown: 0
   takesDamage: 0
@@ -5740,6 +5739,7 @@ MonoBehaviour:
   switchWeapon3: 0
   switchWeaponNone: 0
   enemy: {fileID: 3492499089767589961, guid: 4946a76c534a86a43abfe0192c468d4b, type: 3}
+  ui: {fileID: 0}
   hurt1: {fileID: 0}
   hurt2: {fileID: 0}
   hurt3: {fileID: 0}

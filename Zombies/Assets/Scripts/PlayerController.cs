@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
     public int smallAmmo;
     public int medAmmo;
     public int bigAmmo;
-    public int score;
     public int totalScore;
     public bool IsDown;
     public bool takesDamage;
@@ -33,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public bool switchWeapon3;
     public bool switchWeaponNone;
     public Enemy enemy;
+    public UI ui;
     public GameObject hurt1;
     public GameObject hurt2;
     public GameObject hurt3;
@@ -166,6 +166,32 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag == "BuyWeapon2")
+        {
+            ui.cost = 600;
+            BuyText();
+            if (ui.score >= 600 && Input.GetKeyDown(KeyCode.E))
+            {
+                ui.score -= 600;
+                medAmmo += 8;
+                hasWeapon2 = true;
+                usingWeapon2 = true;
+                other.gameObject.SetActive(false);
+            }
+        }
+        else if (other.gameObject.tag == "BuyWeapon3")
+        {
+            ui.cost = 1200;
+            BuyText();
+            if (ui.score >= 1200 && Input.GetKeyDown(KeyCode.E))
+            {
+                ui.score -= 1200;
+                bigAmmo += 25;
+                hasWeapon3 = true;
+                usingWeapon3 = true;
+                other.gameObject.SetActive(false);
+            }
+        }
         if (other.gameObject.tag == "Weapon1")
         {
             //autoswitches to weapon 1 if player didn't previously have it 
@@ -517,7 +543,16 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
-    //keeps you from shooting while switching weapons 
+    IEnumerator BuyText()
+    {
+        ui.showCost = true;
+        yield return new WaitForSeconds(3f);
+        ui.showCost = false;
+    }
+    /// <summary>
+    /// switches weapons with the appropriate animations and keeps you from shooting during switch
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SwitchWeapons1()
     {
         switchingWeapon = true;

@@ -11,17 +11,17 @@ public class MapController : MonoBehaviour
     public int RoundNumber;
     public int enemiesKilled;
     public int enemiesInWave;
+    public int SpawnRate;
+    public int SpawnIndex;
+    public int numberSpawnedThisRound;
+    public int numberOfSpawns;
     public GameObject enemy1;
     public GameObject enemy2;
     public GameObject Player;
     public GameObject[] spawns;
     public Enemy enemy;
-    public PlayerController playerController;
+    public UI ui;
     public bool CanSpawn;
-    public int SpawnRate;
-    public int SpawnIndex;
-    public int numberSpawnedThisRound;
-    public int numberOfSpawns;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +45,12 @@ public class MapController : MonoBehaviour
             numberOfSpawns = 7;
             SpawnEnemies();
         }
+        if (RoundNumber == 3)
+        {
+            SpawnRate = 3;
+            numberOfSpawns = 8;
+            SpawnEnemies();
+        }
     }
     private void SpawnEnemies()
     {
@@ -62,6 +68,7 @@ public class MapController : MonoBehaviour
                     enemyScript.Player = Player;
                     enemyScript.player = Player.transform;
                     enemyScript.mapController = this;
+                    enemyScript.userInterface = ui;
                     StartCoroutine(EnemySpawnCooldown());
                     numberSpawnedThisRound++;
                     SpawnIndex = 0;
@@ -75,6 +82,7 @@ public class MapController : MonoBehaviour
                     enemyScript.Player = Player;
                     enemyScript.player = Player.transform;
                     enemyScript.mapController = this;
+                    enemyScript.userInterface = ui;
                     StartCoroutine(EnemySpawnCooldown());
                     numberSpawnedThisRound++;
                     SpawnIndex++;

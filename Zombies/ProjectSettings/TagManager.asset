@@ -12,6 +12,8 @@ TagManager:
   - SmallAmmo
   - BigAmmo
   - MedAmmo
+  - BuyWeapon2
+  - BuyWeapon3
   layers:
   - Default
   - TransparentFX
