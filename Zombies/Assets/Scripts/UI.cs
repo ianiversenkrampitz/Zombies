@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 //Iversen-Krampitz, Ian 
-//11/30/2023
+//12/5/2023
 //controls UI.
 
 public class UI : MonoBehaviour
@@ -14,9 +14,9 @@ public class UI : MonoBehaviour
     public TMP_Text Cost;
     public PlayerController playerController;
     public MapController mapController;
+    public Enemy enemy;
     public int cost;
     public bool showCost;
-    public int score;
 
     // Start is called before the first frame update
     void Start()
@@ -30,8 +30,8 @@ public class UI : MonoBehaviour
         //shows the cost of a weapon when going close to it 
         if (showCost == true)
         {
-            Cost.text = "Press E to buy for " + cost;
-            Debug.Log("showcost is true");
+            Cost.text = "Interact to buy for " + cost;
+            StartCoroutine(BuyText());
         }
         else
         {
@@ -39,7 +39,7 @@ public class UI : MonoBehaviour
         }
         //creates round number 
         Round.text = "Round " + mapController.RoundNumber;
-        Score.text = "Score: " + score;
+        Score.text = "Score: " + playerController.totalScore;
         //creates ammo count based on weapon being used 
         if (playerController.usingWeapon1 == true)
         {
@@ -57,5 +57,15 @@ public class UI : MonoBehaviour
         {
             Ammo.text = "";
         }
+    }
+    /// <summary>
+    /// displays buy text for 2 seconds 
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator BuyText()
+    {
+        yield return new WaitForSeconds(2f);
+        showCost = false;
+        Debug.Log("showcost is true");
     }
 }

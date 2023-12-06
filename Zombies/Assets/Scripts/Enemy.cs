@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 //Iversen-Krampitz, Ian 
-//11/30/2023
+//12/5/2023
 //controls enemies. 
 
 public class Enemy : MonoBehaviour
@@ -19,19 +19,18 @@ public class Enemy : MonoBehaviour
     private float playerY;
     public MapController mapController;
     public PlayerController playerController;
-    public UI userInterface;
     private Rigidbody rb;
     public Transform player;
     public GameObject Player;
-
+    public GameObject smallAmmo;
+    public GameObject medAmmo;
+    public GameObject bigAmmo;
     // Start is called before the first frame update
     void Start()
     {
         CanAttack = true;
         rb = GetComponent<Rigidbody>();
-        health = 10;
         speed = 3;
-        aggression = 1;
         jumpForce = 7;
     }
 
@@ -72,7 +71,19 @@ public class Enemy : MonoBehaviour
     {
         gameObject.SetActive(false);
         mapController.enemiesKilled++;
-        userInterface.score += 100;
+        int randomDrop = Random.Range(0, 3);
+        if (randomDrop == 0)
+        {
+            Instantiate(smallAmmo, transform.position, transform.rotation);
+        }
+        if (randomDrop == 1)
+        {
+            Instantiate(medAmmo, transform.position, transform.rotation);
+        }
+        if (randomDrop == 2)
+        {
+            Instantiate(bigAmmo, transform.position, transform.rotation);
+        }
     }
     private void Jump()
     {

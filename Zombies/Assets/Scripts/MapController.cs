@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
 //Iversen-Krampitz, Ian 
-//11/30/2023
+//12/5/2023
 //controls the enemy spawns and rate, changes waves 
 
 public class MapController : MonoBehaviour
@@ -15,6 +15,8 @@ public class MapController : MonoBehaviour
     public int SpawnIndex;
     public int numberSpawnedThisRound;
     public int numberOfSpawns;
+    public int aggression;
+    public int health;
     public GameObject enemy1;
     public GameObject enemy2;
     public GameObject Player;
@@ -37,18 +39,24 @@ public class MapController : MonoBehaviour
         {
             SpawnRate = 1;
             numberOfSpawns = 4;
+            aggression = 1;
+            health = 10;
             SpawnEnemies();
         }
         if (RoundNumber == 2)
         {
             SpawnRate = 2;
             numberOfSpawns = 7;
+            aggression = 3;
+            health = 12;
             SpawnEnemies();
         }
         if (RoundNumber == 3)
         {
             SpawnRate = 3;
             numberOfSpawns = 8;
+            aggression = 4;
+            health = 27;
             SpawnEnemies();
         }
     }
@@ -68,7 +76,8 @@ public class MapController : MonoBehaviour
                     enemyScript.Player = Player;
                     enemyScript.player = Player.transform;
                     enemyScript.mapController = this;
-                    enemyScript.userInterface = ui;
+                    enemyScript.aggression = aggression;
+                    enemyScript.health = health;
                     StartCoroutine(EnemySpawnCooldown());
                     numberSpawnedThisRound++;
                     SpawnIndex = 0;
@@ -82,7 +91,8 @@ public class MapController : MonoBehaviour
                     enemyScript.Player = Player;
                     enemyScript.player = Player.transform;
                     enemyScript.mapController = this;
-                    enemyScript.userInterface = ui;
+                    enemyScript.aggression = aggression;
+                    enemyScript.health = health;
                     StartCoroutine(EnemySpawnCooldown());
                     numberSpawnedThisRound++;
                     SpawnIndex++;

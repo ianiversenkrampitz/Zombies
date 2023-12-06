@@ -127,8 +127,13 @@ MonoBehaviour:
   health: 0
   jumpForce: 0
   mapController: {fileID: 0}
+  playerController: {fileID: 0}
+  ui: {fileID: 0}
   player: {fileID: 0}
   Player: {fileID: 0}
+  smallAmmo: {fileID: 7928651282717737445, guid: b01d1287929efcd4396ef990fa18242f, type: 3}
+  medAmmo: {fileID: 4398137431769630964, guid: 6bdc37b6c0311cc459659ca8a06de381, type: 3}
+  bigAmmo: {fileID: 8665222152261431282, guid: a6f079454d2edee419ba93c39dc03d83, type: 3}
 --- !u!54 &5726576827149195200
 Rigidbody:
   m_ObjectHideFlags: 0

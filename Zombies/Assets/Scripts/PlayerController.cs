@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 //Iversen-Krampitz, Ian
-//11/16/2023
+//12/5/2023
 //Controls the player, collision, guns, UI. 
 
 public class PlayerController : MonoBehaviour
@@ -40,6 +40,8 @@ public class PlayerController : MonoBehaviour
     public GameObject weapon1;
     public GameObject weapon2;
     public GameObject weapon3;
+    public GameObject buyWeapon2;
+    public GameObject buyWeapon3;
     public Animation pistolAnimation;
     public Animation shotgunAnimation;
     public Animation arAnimation;
@@ -66,6 +68,7 @@ public class PlayerController : MonoBehaviour
         smallAmmo = 15;
         rb = GetComponent<Rigidbody>();
         switchingWeapon = false;
+        ui.showCost = false;
     }
 
     // Update is called once per frame
@@ -113,38 +116,41 @@ public class PlayerController : MonoBehaviour
         {
             FireAutomaticWeapon();
         }
-        //switches weapons 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        //switches weapons
+        if (switchingWeapon == false)
         {
-            if (smallAmmo >= 1)
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                SwitchWeapon1();
+                if (smallAmmo >= 1)
+                {
+                    SwitchWeapon1();
+                }
+                else
+                {
+                    Debug.Log("No ammo for weapon1.");
+                }
             }
-            else
+            if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                Debug.Log("No ammo for weapon1.");
+                if (medAmmo >= 1 && hasWeapon2)
+                {
+                    SwitchWeapon2();
+                }
+                else
+                {
+                    Debug.Log("No ammo for weapon2.");
+                }
             }
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            if (medAmmo >= 1)
+            if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                SwitchWeapon2();
-            }
-            else
-            {
-                Debug.Log("No ammo for weapon2.");
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            if (bigAmmo >= 1)
-            {
-                SwitchWeapon3();
-            }
-            else
-            {
-                Debug.Log("No ammo for weapon3.");
+                if (bigAmmo >= 1 && hasWeapon3)
+                {
+                    SwitchWeapon3();
+                }
+                else
+                {
+                    Debug.Log("No ammo for weapon3.");
+                }
             }
         }
     }
@@ -169,43 +175,14 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "BuyWeapon2")
         {
             ui.cost = 600;
-            BuyText();
-            if (ui.score >= 600 && Input.GetKeyDown(KeyCode.E))
-            {
-                ui.score -= 600;
-                medAmmo += 8;
-                hasWeapon2 = true;
-                usingWeapon2 = true;
-                other.gameObject.SetActive(false);
-            }
+            ui.showCost = true;
         }
-        else if (other.gameObject.tag == "BuyWeapon3")
+        if (other.gameObject.tag == "BuyWeapon3")
         {
             ui.cost = 1200;
-            BuyText();
-            if (ui.score >= 1200 && Input.GetKeyDown(KeyCode.E))
-            {
-                ui.score -= 1200;
-                bigAmmo += 25;
-                hasWeapon3 = true;
-                usingWeapon3 = true;
-                other.gameObject.SetActive(false);
-            }
+            ui.showCost = true;
         }
-        if (other.gameObject.tag == "Weapon1")
-        {
-            //autoswitches to weapon 1 if player didn't previously have it 
-            if (hasWeapon1 == false || usingNoGun == true)
-            {
-                SwitchWeapon1();
-                hasWeapon1 = true;
-                usingNoGun = false;
-            }
-            smallAmmo += 15;
-            other.gameObject.SetActive(false);
-            Debug.Log("Picked up weapon1.");
-        }
-        if (other.gameObject.tag == "Weapon2")
+        if (other.gameObject.tag == "Weapon2" && totalScore >= 600)
         {
             //autoswitches to weapon 2 if player didn't previously have it 
             if (hasWeapon2 == false || usingNoGun == true)
@@ -216,9 +193,10 @@ public class PlayerController : MonoBehaviour
             }
             medAmmo += 8;
             other.gameObject.SetActive(false);
+            buyWeapon2.SetActive(false);
             Debug.Log("Picked up weapon2.");
         }
-        if (other.gameObject.tag == "Weapon3")
+        if (other.gameObject.tag == "Weapon3" && totalScore >= 1200)
         {
             //autoswitches to weapon 3 if player didn't previously have it 
             if (hasWeapon3 == false || usingNoGun == true)
@@ -229,6 +207,7 @@ public class PlayerController : MonoBehaviour
             }
             bigAmmo += 30;
             other.gameObject.SetActive(false);
+            buyWeapon3.SetActive(false);
             Debug.Log("Picked up weapon3.");
         }
         if (other.gameObject.tag == "SmallAmmo")
@@ -251,7 +230,7 @@ public class PlayerController : MonoBehaviour
         }
         if (other.gameObject.tag == "BigAmmo")
         {
-            bigAmmo += 1;
+            bigAmmo += 20;
             if (usingNoGun == true && hasWeapon3 == true)
             {
                 SwitchWeapon3();
@@ -285,6 +264,10 @@ public class PlayerController : MonoBehaviour
                         {
                             Enemy enemyScript = hit.collider.GetComponent<Enemy>();
                             enemyScript.health -= 3;
+                            if (enemyScript.health <= 0)
+                            {
+                                totalScore += 100;
+                            }
                             Debug.Log("bullet hit enemy.");
                         }
                     }
@@ -320,6 +303,10 @@ public class PlayerController : MonoBehaviour
                         {
                             Enemy enemyScript = hit.collider.GetComponent<Enemy>();
                             enemyScript.health -= 7;
+                            if (enemyScript.health <= 0)
+                            {
+                                totalScore += 100;
+                            }
                             Debug.Log("bullet hit enemy.");
                         }
                     }
@@ -359,6 +346,10 @@ public class PlayerController : MonoBehaviour
                     {
                         Enemy enemyScript = hit.collider.GetComponent<Enemy>();
                         enemyScript.health -= 3;
+                        if (enemyScript.health <= 0)
+                        {
+                            totalScore += 100;
+                        }
                         Debug.Log("bullet hit enemy.");
                     }
                 }
@@ -542,12 +533,6 @@ public class PlayerController : MonoBehaviour
             }
             yield return new WaitForEndOfFrame();
         }
-    }
-    IEnumerator BuyText()
-    {
-        ui.showCost = true;
-        yield return new WaitForSeconds(3f);
-        ui.showCost = false;
     }
     /// <summary>
     /// switches weapons with the appropriate animations and keeps you from shooting during switch
