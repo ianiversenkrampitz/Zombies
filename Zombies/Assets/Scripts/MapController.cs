@@ -38,7 +38,7 @@ public class MapController : MonoBehaviour
         if (RoundNumber == 1)
         {
             SpawnRate = 1;
-            numberOfSpawns = 4;
+            numberOfSpawns = 5;
             aggression = 1;
             health = 10;
             SpawnEnemies();

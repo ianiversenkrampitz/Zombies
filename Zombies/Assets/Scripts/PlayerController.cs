@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     public int medAmmo;
     public int bigAmmo;
     public int totalScore;
+    public int damage1;
+    public int damage2;
     public bool IsDown;
     public bool takesDamage;
     public bool hasWeapon1;
@@ -65,10 +67,12 @@ public class PlayerController : MonoBehaviour
         canFireW2 = true;
         canFireW3 = true;
         speed = 6;
-        smallAmmo = 15;
+        smallAmmo = 25;
         rb = GetComponent<Rigidbody>();
         switchingWeapon = false;
         ui.showCost = false;
+        damage1 = 3;
+        damage2 = 6;
     }
 
     // Update is called once per frame
@@ -172,6 +176,20 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag == "PowerUp")
+        {
+
+        }
+        if (other.gameObject.tag == "QuadDamage")
+        {
+            StartCoroutine(QuadDamage());
+            other.gameObject.SetActive(false);
+        }
+        if (other.gameObject.tag == "Invulnerability")
+        {
+            StartCoroutine(Invulnerability());
+            other.gameObject.SetActive(false);
+        }
         if (other.gameObject.tag == "BuyWeapon2")
         {
             ui.cost = 600;
@@ -263,7 +281,7 @@ public class PlayerController : MonoBehaviour
                         else if (hit.collider.tag == "Enemy")
                         {
                             Enemy enemyScript = hit.collider.GetComponent<Enemy>();
-                            enemyScript.health -= 3;
+                            enemyScript.health -= damage1;
                             if (enemyScript.health <= 0)
                             {
                                 totalScore += 100;
@@ -302,7 +320,7 @@ public class PlayerController : MonoBehaviour
                         else if (hit.collider.tag == "Enemy")
                         {
                             Enemy enemyScript = hit.collider.GetComponent<Enemy>();
-                            enemyScript.health -= 7;
+                            enemyScript.health -= damage2;
                             if (enemyScript.health <= 0)
                             {
                                 totalScore += 100;
@@ -345,7 +363,7 @@ public class PlayerController : MonoBehaviour
                     else if (hit.collider.tag == "Enemy")
                     {
                         Enemy enemyScript = hit.collider.GetComponent<Enemy>();
-                        enemyScript.health -= 3;
+                        enemyScript.health -= damage1;
                         if (enemyScript.health <= 0)
                         {
                             totalScore += 100;
@@ -533,6 +551,24 @@ public class PlayerController : MonoBehaviour
             }
             yield return new WaitForEndOfFrame();
         }
+    }
+    /// <summary>
+    /// makes damage 4x normal for 20 seconds 
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator QuadDamage()
+    {
+        damage1 = 12;
+        damage2 = 24;
+        yield return new WaitForSeconds(20f);
+        damage1 = 3;
+        damage2 = 6;
+    }
+    IEnumerator Invulnerability()
+    {
+        takesDamage = false;
+        yield return new WaitForSeconds(20f);
+        takesDamage = true;
     }
     /// <summary>
     /// switches weapons with the appropriate animations and keeps you from shooting during switch
