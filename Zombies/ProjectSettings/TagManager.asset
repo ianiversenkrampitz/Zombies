@@ -14,6 +14,12 @@ TagManager:
   - MedAmmo
   - BuyWeapon2
   - BuyWeapon3
+  - Invulnerability
+  - QuadDamage
+  - PowerUp
+  - DeathFloor
+  - BuyDoorOpen
+  - DoorOpen
   layers:
   - Default
   - TransparentFX

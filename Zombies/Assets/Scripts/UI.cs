@@ -12,17 +12,16 @@ public class UI : MonoBehaviour
     public TMP_Text Round;
     public TMP_Text Score;
     public TMP_Text Cost;
+    public TMP_Text Invulnerability;
+    public TMP_Text QuadDamage;
+    public TMP_Text NoAmmo;
     public PlayerController playerController;
     public MapController mapController;
     public Enemy enemy;
     public int cost;
     public bool showCost;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
+    public bool showPowerUp1;
+    public bool showPowerUp2;
 
     // Update is called once per frame
     void Update()
@@ -36,6 +35,34 @@ public class UI : MonoBehaviour
         else
         {
             Cost.text = "";
+        }
+        //shows text for invulnerability 
+        if (showPowerUp1 == true)
+        {
+            Invulnerability.text = "Invulnerability Active for 20 Seconds.";
+            StartCoroutine(InvulnerabilityTextCooldown());
+        }
+        else
+        {
+            Invulnerability.text = "";
+        }
+        //shows text for quad damage
+        if (showPowerUp2 == true)
+        {
+            QuadDamage.text = "Quad Damage Active for 20 Seconds.";
+            StartCoroutine(QuadDamageTextCooldown());
+        }
+        else
+        {
+            QuadDamage.text = "";
+        }
+        if (playerController.usingNoGun == true)
+        {
+            NoAmmo.text = "No Ammo";
+        }
+        else
+        {
+            NoAmmo.text = "";
         }
         //creates round number 
         Round.text = "Round " + mapController.RoundNumber;
@@ -66,6 +93,25 @@ public class UI : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         showCost = false;
-        Debug.Log("showcost is true");
+    }
+    /// <summary>
+    /// cooldown for invulnerability text
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator InvulnerabilityTextCooldown()
+    {
+        showPowerUp1 = true;
+        yield return new WaitForSeconds(3f);
+        showPowerUp1 = false;
+    }
+    /// <summary>
+    /// cooldown for quad damage text
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator QuadDamageTextCooldown()
+    {
+        showPowerUp2 = true;
+        yield return new WaitForSeconds(3f);
+        showPowerUp2 = false;
     }
 }

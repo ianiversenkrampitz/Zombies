@@ -49,16 +49,28 @@ MonoBehaviour:
   enemiesInWave: 0
   SpawnRate: 0
   SpawnIndex: 0
+  PowerUpIndex: 0
   numberSpawnedThisRound: 0
   numberOfSpawns: 0
+  aggression: 0
+  health: 0
   enemy1: {fileID: 2731830483979527321, guid: 4946a76c534a86a43abfe0192c468d4b, type: 3}
-  enemy2: {fileID: 0}
   Player: {fileID: 0}
   spawns:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  PowerUpKey: {fileID: 4477904669292050886, guid: 9bff5af9936ad484cac228085e25bf94, type: 3}
+  PowerUp1: {fileID: 0}
+  PowerUp2: {fileID: 0}
+  PowerUp3: {fileID: 0}
+  PowerUp4: {fileID: 0}
+  PowerUpMain: {fileID: 0}
+  Invincibility: {fileID: 2050241133561564679, guid: 9e807aacd6e96de42a71db287ad71028, type: 3}
+  QuadDamage: {fileID: 7877460848981156348, guid: 10d910525fbf95042af4e9a72b43e0fd, type: 3}
   enemy: {fileID: 3492499089767589961, guid: 4946a76c534a86a43abfe0192c468d4b, type: 3}
   ui: {fileID: 0}
   CanSpawn: 0
+  CanSpawnPowerUp: 0
+  PowerUpSpawned: 0

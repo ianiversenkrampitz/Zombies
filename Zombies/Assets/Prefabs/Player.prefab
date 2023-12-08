@@ -5597,7 +5597,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.14, y: 4.42, z: 0.77}
-  m_LocalScale: {x: 0.726, y: 0.726, z: 0.726}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3880910462073512323}
@@ -5721,6 +5721,8 @@ MonoBehaviour:
   medAmmo: 0
   bigAmmo: 0
   totalScore: 0
+  damage1: 0
+  damage2: 0
   IsDown: 0
   takesDamage: 0
   hasWeapon1: 1
@@ -5740,6 +5742,7 @@ MonoBehaviour:
   switchWeaponNone: 0
   enemy: {fileID: 3492499089767589961, guid: 4946a76c534a86a43abfe0192c468d4b, type: 3}
   ui: {fileID: 0}
+  mapController: {fileID: 0}
   hurt1: {fileID: 0}
   hurt2: {fileID: 0}
   hurt3: {fileID: 0}
@@ -5747,6 +5750,8 @@ MonoBehaviour:
   weapon1: {fileID: 8970862851378863960}
   weapon2: {fileID: 8197407302031202591}
   weapon3: {fileID: 449133258794643918}
+  buyWeapon2: {fileID: 0}
+  buyWeapon3: {fileID: 0}
   pistolAnimation: {fileID: 1449218197249354918}
   shotgunAnimation: {fileID: 4858992833555575817}
   arAnimation: {fileID: 1497558833422576593}
