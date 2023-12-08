@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
     public GameObject smallAmmo;
     public GameObject medAmmo;
     public GameObject bigAmmo;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -64,6 +65,14 @@ public class Enemy : MonoBehaviour
             Die();
         }
     }
+    //kills enemies if they manage to clip into ground
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "DeathFloor")
+        {
+            Die();
+        }
+    }
     /// <summary>
     /// kills enemy and adds to enemies killed count 
     /// </summary>
@@ -71,6 +80,7 @@ public class Enemy : MonoBehaviour
     {
         gameObject.SetActive(false);
         mapController.enemiesKilled++;
+        //drops random ammo type
         int randomDrop = Random.Range(0, 3);
         if (randomDrop == 0)
         {
@@ -96,12 +106,20 @@ public class Enemy : MonoBehaviour
     {
         StartCoroutine(WaitToAttack());
     }
+    /// <summary>
+    /// cooldown for attack
+    /// </summary>
+    /// <returns></returns>
     IEnumerator WaitToAttack()
     {
         CanAttack = false;
         yield return new WaitForSeconds(1f);
         CanAttack = true;
     }
+    /// <summary>
+    /// cooldown for jump
+    /// </summary>
+    /// <returns></returns>
     IEnumerator WaitToJump()
     {
         CanAttack = false;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 //Iversen-Krampitz, Ian
 //12/5/2023
 //Controls the player, collision, guns, UI. 
@@ -35,10 +36,10 @@ public class PlayerController : MonoBehaviour
     public bool switchWeaponNone;
     public Enemy enemy;
     public UI ui;
+    public MapController mapController;
     public GameObject hurt1;
     public GameObject hurt2;
     public GameObject hurt3;
-    public GameObject noWeapon;
     public GameObject weapon1;
     public GameObject weapon2;
     public GameObject weapon3;
@@ -176,28 +177,49 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        //for power up keys
         if (other.gameObject.tag == "PowerUp")
         {
-
+            mapController.PowerUpIndex++;
+            other.gameObject.SetActive(false);
+            Debug.Log("Picked up power up key.");
         }
+        //for quad damage power up
         if (other.gameObject.tag == "QuadDamage")
         {
             StartCoroutine(QuadDamage());
             other.gameObject.SetActive(false);
+            mapController.PowerUpSpawned = false;
+            mapController.CanSpawnKeys = true;
+            ui.showPowerUp2 = true;
+            Debug.Log("Picked up quad damage.");
         }
+        //for invulnerability power up
         if (other.gameObject.tag == "Invulnerability")
         {
             StartCoroutine(Invulnerability());
             other.gameObject.SetActive(false);
+            mapController.PowerUpSpawned = false;
+            mapController.CanSpawnKeys = true;
+            ui.showPowerUp1 = true;
+            Debug.Log("Picked up invulnerability.");
         }
+        //for shotgun buying text
         if (other.gameObject.tag == "BuyWeapon2")
         {
             ui.cost = 600;
             ui.showCost = true;
         }
+        //for assault rifle buying text
         if (other.gameObject.tag == "BuyWeapon3")
         {
             ui.cost = 1200;
+            ui.showCost = true;
+        }
+        //for door open buying text
+        if (other.gameObject.tag == "BuyDoorOpen")
+        {
+            ui.cost = 2000;
             ui.showCost = true;
         }
         if (other.gameObject.tag == "Weapon2" && totalScore >= 600)
@@ -209,6 +231,7 @@ public class PlayerController : MonoBehaviour
                 hasWeapon2 = true;
                 usingNoGun = false;
             }
+            totalScore -= 600;
             medAmmo += 8;
             other.gameObject.SetActive(false);
             buyWeapon2.SetActive(false);
@@ -223,10 +246,17 @@ public class PlayerController : MonoBehaviour
                 hasWeapon3 = true;
                 usingNoGun = false;
             }
+            totalScore -= 1200;
             bigAmmo += 30;
             other.gameObject.SetActive(false);
             buyWeapon3.SetActive(false);
             Debug.Log("Picked up weapon3.");
+        }
+        if (other.gameObject.tag == "DoorOpen" && totalScore >= 2000)
+        {
+            totalScore -= 2000;
+            other.gameObject.SetActive(false);
+            Debug.Log("Opened locked door.");
         }
         if (other.gameObject.tag == "SmallAmmo")
         {
@@ -275,11 +305,11 @@ public class PlayerController : MonoBehaviour
                         smallAmmo -= 1;
                         if (hit.collider.tag == "Environment")
                         {
-                            //insert appropriate bullet decal here
                             Debug.Log("bullet hit wall.");
                         }
                         else if (hit.collider.tag == "Enemy")
                         {
+                            //deals damage to enemy 
                             Enemy enemyScript = hit.collider.GetComponent<Enemy>();
                             enemyScript.health -= damage1;
                             if (enemyScript.health <= 0)
@@ -308,17 +338,18 @@ public class PlayerController : MonoBehaviour
             {
                 if (medAmmo >= 1)
                 {
+                    //plays gun animation 
                     shotgunAnimation.Play("ShotgunFire");
                     if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
                     {
                         medAmmo -= 1;
                         if (hit.collider.tag == "Environment")
                         {
-                            //insert appropriate bullet decal here 
                             Debug.Log("bullet hit wall.");
                         }
                         else if (hit.collider.tag == "Enemy")
                         {
+                            //deals damage to enemy
                             Enemy enemyScript = hit.collider.GetComponent<Enemy>();
                             enemyScript.health -= damage2;
                             if (enemyScript.health <= 0)
@@ -351,17 +382,18 @@ public class PlayerController : MonoBehaviour
         {
             if (bigAmmo >= 1)
             {
+                //plays gun animation 
                 arAnimation.Play("ArFire");
                 if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, 200f))
                 {
                     bigAmmo -= 1;
                     if (hit.collider.tag == "Environment")
                     {
-                        //insert appropriate bullet decal here 
                         Debug.Log("bullet hit wall.");
                     }
                     else if (hit.collider.tag == "Enemy")
                     {
+                        //deals damage to enemy
                         Enemy enemyScript = hit.collider.GetComponent<Enemy>();
                         enemyScript.health -= damage1;
                         if (enemyScript.health <= 0)
@@ -492,7 +524,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Die()
     {
-        //put game over screen load, probably SceneManager.LoadScene(3); 
+        SceneManager.LoadScene(2);
         Debug.Log("Player died.");
     }
     /// <summary>
@@ -571,7 +603,7 @@ public class PlayerController : MonoBehaviour
         takesDamage = true;
     }
     /// <summary>
-    /// switches weapons with the appropriate animations and keeps you from shooting during switch
+    /// switches weapon to 1 with the appropriate animations and keeps you from shooting during switch
     /// </summary>
     /// <returns></returns>
     IEnumerator SwitchWeapons1()
@@ -607,6 +639,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         switchingWeapon = false;
     }
+    /// <summary>
+    /// switches weapon to 2 with the appropriate animations and keeps you from shooting during switch
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SwitchWeapons2()
     {
         switchingWeapon = true;
@@ -640,6 +676,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         switchingWeapon = false;
     }
+    /// <summary>
+    /// switches weapon to 1 with the appropriate animations and keeps you from shooting during switch
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SwitchWeapons3()
     {
         switchingWeapon = true;
@@ -673,6 +713,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         switchingWeapon = false;
     }
+    /// <summary>
+    /// switches weapon to none with the appropriate animations and keeps you from shooting during switch
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SwitchWeaponsNone()
     {
         switchingWeapon = true;
